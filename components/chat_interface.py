@@ -4,6 +4,33 @@ from datetime import datetime
 from core.utils import get_current_time, get_ai_response, save_conversations
 import requests
 
+# ---- Translation Code Directly Here ----
+from googletrans import Translator
+
+lang_map = {
+    "English": "en",
+    "Hindi": "hi",
+    "Bengali": "bn",
+    "Gujarati": "gu",
+    "Tamil": "ta",
+    "Telugu": "te",
+    "Marathi": "mr",
+    "Punjabi": "pa"
+}
+translator = Translator()
+
+def translate_chatbot_reply(text):
+    lang = st.session_state.get("language", "English")
+    if lang != "English":
+        try:
+            translated = translator.translate(text, dest=lang_map[lang]).text
+            return translated
+        except Exception as e:
+            print(f"Translation error: {e}")
+            return text
+    return text
+# -----------------------------------------
+
 # Inject JS to get user's local time zone
 def set_user_time_in_session():
     if "user_time_offset" not in st.session_state:
@@ -112,9 +139,13 @@ def handle_chat_input(model, system_prompt):
                     prompt = f"{system_prompt}\n\n{memory}\nUser: {user_input.strip()}\nBot:"
                     ai_response = get_ai_response(prompt, model)
 
+                    # --------------- TRANSLATE THE BOT REPLY ---------------
+                    ai_response_translated = translate_chatbot_reply(ai_response)
+                    # -------------------------------------------------------
+
                     active_convo["messages"].append({
                         "sender": "bot",
-                        "message": ai_response,
+                        "message": ai_response_translated,
                         "time": get_current_time()
                     })
 

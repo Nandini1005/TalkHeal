@@ -76,6 +76,15 @@ mental_health_resources_full = {
 
 def render_sidebar():
     """Renders the left and right sidebars."""
+
+    with st.sidebar:
+     st.header("🌐 Chatbot Reply Language")
+    st.session_state.language = st.selectbox(
+        "Choose reply language for chatbot:",
+        ["English", "Hindi", "Bengali", "Gujarati", "Tamil", "Telugu", "Marathi", "Punjabi"],
+        index=0
+    )
+
      
     with st.sidebar:
         render_profile_section()

@@ -19,6 +19,30 @@ from components.chat_interface import render_chat_interface, handle_chat_input
 from components.emergency_page import render_emergency_page
 from components.profile import apply_global_font_size
 
+# ------------- ADDED FOR CHATBOT LANGUAGE ---------------
+from googletrans import Translator
+
+lang_map = {
+    "English": "en",
+    "Hindi": "hi",
+    "Bengali": "bn",
+    "Gujarati": "gu",
+    "Tamil": "ta",
+    "Telugu": "te",
+    "Marathi": "mr",
+    "Punjabi": "pa"
+}
+translator = Translator()
+
+def translate_chatbot_reply(text):
+    lang = st.session_state.get("language", "English")
+    if lang != "English":
+        try:
+            return translator.translate(text, dest=lang_map[lang]).text
+        except Exception:
+            return text
+    return text
+# -------------------------------------------------------
 
 # --- 1. INITIALIZE SESSION STATE ---
 if "chat_history" not in st.session_state:
@@ -40,16 +64,17 @@ if "mental_disorders" not in st.session_state:
     ]
 if "selected_tone" not in st.session_state:
     st.session_state.selected_tone = "Compassionate Listener"
+if "language" not in st.session_state:
+    st.session_state.language = "English"
 
 # --- 2. SET PAGE CONFIG ---
 apply_global_font_size()
-
 
 # --- 3. APPLY STYLES & CONFIGURATIONS ---
 apply_custom_css()
 model = configure_gemini()
 
-# --- 4. TONE SELECTION DROPDOWN IN SIDEBAR ---
+# --- 4. TONE & LANGUAGE SELECTION DROPDOWN IN SIDEBAR ---
 TONE_OPTIONS = {
     "Compassionate Listener": "You are a compassionate listener — soft, empathetic, patient — like a therapist who listens without judgment.",
     "Motivating Coach": "You are a motivating coach — energetic, encouraging, and action-focused — helping the user push through rough days.",
@@ -66,6 +91,15 @@ with st.sidebar:
         index=0
     )
     st.session_state.selected_tone = selected_tone
+
+    # ------------- LANGUAGE DROPDOWN ADDED HERE -------------
+    st.header("🌐 Chatbot Reply Language")
+    st.session_state.language = st.selectbox(
+        "Choose reply language for chatbot:",
+        ["English", "Hindi", "Bengali", "Gujarati", "Tamil", "Telugu", "Marathi", "Punjabi"],
+        index=0
+    )
+    # --------------------------------------------------------
 
 # --- 5. DEFINE FUNCTION TO GET TONE PROMPT ---
 def get_tone_prompt():
@@ -114,4 +148,4 @@ st.markdown("""
     }
     setTimeout(scrollToBottom, 100);
 </script>
-""", unsafe_allow_html=True) 
+""", unsafe_allow_html=True)
