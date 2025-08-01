@@ -20,7 +20,8 @@ from components.emergency_page import render_emergency_page
 from components.profile import apply_global_font_size
 
 # ------------- ADDED FOR CHATBOT LANGUAGE ---------------
-from googletrans import Translator
+from deep_translator import GoogleTranslator
+
 
 lang_map = {
     "English": "en",
@@ -32,13 +33,13 @@ lang_map = {
     "Marathi": "mr",
     "Punjabi": "pa"
 }
-translator = Translator()
+
 
 def translate_chatbot_reply(text):
     lang = st.session_state.get("language", "English")
     if lang != "English":
         try:
-            return translator.translate(text, dest=lang_map[lang]).text
+            return GoogleTranslator.translate(text, dest=lang_map[lang]).text
         except Exception:
             return text
     return text
