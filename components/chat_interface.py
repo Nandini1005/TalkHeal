@@ -5,7 +5,7 @@ from core.utils import get_current_time, get_ai_response, save_conversations
 import requests
 
 # ---- Translation Code Directly Here ----
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 lang_map = {
     "English": "en",
@@ -17,18 +17,17 @@ lang_map = {
     "Marathi": "mr",
     "Punjabi": "pa"
 }
-translator = Translator()
 
 def translate_chatbot_reply(text):
     lang = st.session_state.get("language", "English")
     if lang != "English":
         try:
-            translated = translator.translate(text, dest=lang_map[lang]).text
-            return translated
+            return GoogleTranslator(source="auto", target=lang_map[lang]).translate(text)
         except Exception as e:
-            print(f"Translation error: {e}")
+            print("Translation error:", e)
             return text
     return text
+
 # -----------------------------------------
 
 # Inject JS to get user's local time zone

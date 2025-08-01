@@ -5,4 +5,5 @@ geopy
 requests
 Pillow
 streamlit-lottie
-googletrans==4.0.0-rc1
+deep-translator
+
